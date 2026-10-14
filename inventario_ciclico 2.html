@@ -2912,6 +2912,7 @@ function renderFechamento(){
           <div class="metric-row"><span class="m-label">QTDE ENCONTRADA (FÍSICO):</span><span class="m-value">${qtdEncontradaNum!==null?fmtNum(qtdEncontradaNum):(pendenteOuAuditar?(row.contagemFinal==='AUDITAR'?'AUDITAR':'Pendente'):'—')}</span></div>
           <div class="metric-row"><span class="m-label">QTDE SOBRA:</span><span class="m-value">${fmtNum(qtdSobra)}</span></div>
           <div class="metric-row"><span class="m-label">QTDE FALTA:</span><span class="m-value">${fmtNum(qtdFalta)}</span></div>
+          <div class="metric-row acur"><span class="m-label">ACURACIDADE:</span><span class="m-value">${acuraciaGrossQtd!==null?fmtPct(acuraciaGrossQtd):'—'}</span></div>
         </div>
       </section>
       <section class="capa-panel">
@@ -2921,6 +2922,7 @@ function renderFechamento(){
           <div class="metric-row"><span class="m-label">VALOR ENCONTRADO (FÍSICO):</span><span class="m-value">${valorEncontrado!==null?fmtMoney(valorEncontrado):'—'}</span></div>
           <div class="metric-row"><span class="m-label">VALOR SOBRA:</span><span class="m-value">${fmtMoney(valorSobra)}</span></div>
           <div class="metric-row"><span class="m-label">VALOR FALTA:</span><span class="m-value red">${fmtMoney(valorFalta)}</span></div>
+          <div class="metric-row acur"><span class="m-label">ACURACIDADE:</span><span class="m-value">${acuraciaGrossValor!==null?fmtPct(acuraciaGrossValor):'—'}</span></div>
         </div>
       </section>
     </div>
@@ -2946,6 +2948,7 @@ function renderFechamento(){
             <div class="metric-row"><span class="m-label">QTDE ENCONTRADA (FÍSICO):</span><span class="m-value">${qtdEncontradaNum!==null?fmtNum(qtdEncontradaNum):(pendenteOuAuditar?(row.contagemFinal==='AUDITAR'?'AUDITAR':'Pendente'):'—')}</span></div>
             <div class="metric-row"><span class="m-label">QTDE SOBRA:</span><span class="m-value">${fmtNum(qtdSobra)}</span></div>
             <div class="metric-row"><span class="m-label">QTDE FALTA:</span><span class="m-value">${fmtNum(qtdFalta)}</span></div>
+            <div class="metric-row acur"><span class="m-label">ACURACIDADE:</span><span class="m-value">${acuraciaGrossQtd!==null?fmtPct(acuraciaGrossQtd):'—'}</span></div>
           </div>
         </section>
         <section class="capa-panel">
@@ -2955,6 +2958,7 @@ function renderFechamento(){
             <div class="metric-row"><span class="m-label">VALOR ENCONTRADO (FÍSICO):</span><span class="m-value">${valorEncontrado!==null?fmtMoney(valorEncontrado):'—'}</span></div>
             <div class="metric-row"><span class="m-label">VALOR SOBRA:</span><span class="m-value">${fmtMoney(valorSobra)}</span></div>
             <div class="metric-row"><span class="m-label">VALOR FALTA:</span><span class="m-value red">${fmtMoney(valorFalta)}</span></div>
+            <div class="metric-row acur"><span class="m-label">ACURACIDADE:</span><span class="m-value">${acuraciaGrossValor!==null?fmtPct(acuraciaGrossValor):'—'}</span></div>
           </div>
         </section>
       </div>
