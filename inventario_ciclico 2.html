@@ -2739,6 +2739,174 @@ function exportarBackupInventarioExcel(button){
   });
 }
 
+
+/* V21 — restauração do backup Excel exportado pela própria ferramenta.
+   Os dados são restaurados apenas no armazenamento local do navegador;
+   nenhum conteúdo operacional é publicado no GitHub. */
+function converterBackupExcelParaDados(planilhas, contexto){
+  const sheets=(planilhas&&typeof planilhas==='object')?planilhas:{};
+  const required=['Contagens','Fechamentos','Histórico de Preços','Cadastro de Itens'];
+  required.forEach(function(nome){
+    if(!Array.isArray(sheets[nome])) throw new Error('A aba "'+nome+'" não foi encontrada no backup.');
+  });
+
+  const ctx=(contexto&&typeof contexto==='object')?contexto:{};
+  const itemMap={};
+  sheets['Cadastro de Itens'].forEach(function(r){
+    const pn=normalizePn(r&&r['PN']);
+    if(!pn) return;
+    itemMap[pn]={
+      pn:pn,
+      desc:normalizeText(r['Descrição']),
+      unidade:normalizeText(r['Unidade'])||'UN',
+      curva:normalizeText(r['Curva']),
+      status:normalizeText(r['Status'])||'Ativo'
+    };
+  });
+  const items=Object.keys(itemMap).map(function(pn){ return itemMap[pn]; });
+
+  const priceMap={};
+  sheets['Histórico de Preços'].forEach(function(r){
+    const pn=normalizePn(r&&r['PN']);
+    const vigencia=normalizeImportedPriceDate(r&&r['Vigência']);
+    const preco=parseFiniteNumber(r&&r['Preço']);
+    if(!pn||!vigencia||preco===null||preco<0) return;
+    priceMap[pn+'|'+vigencia]={id:uid('prc'),pn:pn,vigencia:vigencia,preco:preco};
+  });
+  const prices=Object.keys(priceMap).map(function(k){ return priceMap[k]; });
+
+  const counts=[];
+  sheets['Contagens'].forEach(function(r){
+    if(!r||typeof r!=='object') return;
+    const data=normalizeImportedDate(r['Data']);
+    const item=normalizePn(r['PN']);
+    const numeroInventario=normalizeText(r['Nº Inventário']);
+    const teorico=parseFiniteNumber(r['Qtde Sistema']);
+    if(!data||!item||teorico===null) return;
+    const c1=parseFiniteNumber(r['1ª Contagem']);
+    const c2=parseFiniteNumber(r['2ª Contagem']);
+    const codinv=normalizeText(r['Cód.Inv'])||codInvFromNumero(data,numeroInventario,'');
+    counts.push({
+      id:uid('cnt'),
+      codinv:codinv,
+      data:data,
+      responsavel:normalizeText(r['Responsável da contagem']),
+      numeroInventario:numeroInventario,
+      local:normalizeText(r['Local']),
+      item:item,
+      teorico:teorico,
+      contagem1:c1===null?'':c1,
+      contagem2:c2===null?'':c2
+    });
+  });
+
+  const causaIdPorLabel={
+    'Erro de recebimento':'recebimento',
+    'Erro de expedição':'expedicao',
+    'Erro de movimentação interna':'movimentacao',
+    'Erro de inventário (ajuste indevido)':'inventario',
+    'Item utilizado sob desvio':'desvio',
+    'Material com avaria':'avaria',
+    'Outros':'outro'
+  };
+  const fechamentos={};
+  sheets['Fechamentos'].forEach(function(r){
+    if(!r||typeof r!=='object') return;
+    const codinv=normalizeText(r['Cód.Inv']);
+    const pn=normalizePn(r['PN']);
+    const key=normalizeText(r['Chave'])||(codinv&&pn?(codinv+'__'+pn):'');
+    if(!key) return;
+    const causas={};
+    normalizeText(r['Causas']).split(';').map(function(v){ return v.trim(); }).filter(Boolean).forEach(function(label){
+      const id=causaIdPorLabel[label];
+      if(id) causas[id]=true;
+    });
+    const causaOutro=normalizeText(r['Causa Outros']);
+    if(causaOutro) causas.outro=true;
+    fechamentos[key]={
+      auditorMeritor:normalizeText(r['Auditor Meritor']),
+      responsavelFechamento:normalizeText(r['Responsável fechamento (legado)']),
+      dataAuditor:normalizeImportedDate(r['Data Auditor'])||'',
+      dataResponsavel:normalizeImportedDate(r['Data responsável (legado)'])||'',
+      causas:causas,
+      causaOutroTexto:causaOutro,
+      resultadoAnalise:normalizeText(r['Resultado da análise']),
+      decisoesRecontagem:normalizeText(r['Decisões tomadas após a recontagem'])
+    };
+  });
+
+  if(!items.length) throw new Error('O backup não contém itens válidos para restaurar.');
+  if(!prices.length) throw new Error('O backup não contém histórico de preços válido para restaurar.');
+
+  return {
+    items:items,
+    prices:prices,
+    counts:counts,
+    listas:(ctx.listas&&typeof ctx.listas==='object')?ctx.listas:{},
+    meta:Object.assign({},(ctx.meta&&typeof ctx.meta==='object')?ctx.meta:{},{restoredAt:new Date().toISOString()}),
+    fechamentos:fechamentos
+  };
+}
+
+function importarBackupInventarioExcel(file,input,button){
+  return withButtonState(button,'Restaurando...',async function(){
+    if(typeof XLSX==='undefined' || !XLSX.utils || typeof XLSX.read!=='function'){
+      throw actionError('A biblioteca necessária para restaurar o backup Excel não foi carregada. Verifique sua conexão e recarregue a ferramenta.','Excel indisponível');
+    }
+    if(!file) throw actionError('Selecione o arquivo de backup Excel.','Arquivo obrigatório');
+    try{
+      const buffer=await readFileArrayBuffer(file);
+      const wb=XLSX.read(buffer,{type:'array',cellDates:true});
+      const nomes=['Contagens','Fechamentos','Histórico de Preços','Cadastro de Itens'];
+      const planilhas={};
+      nomes.forEach(function(nome){
+        const ws=wb.Sheets[nome];
+        if(!ws) throw new Error('A aba "'+nome+'" não foi encontrada. Use um backup gerado por esta ferramenta.');
+        planilhas[nome]=XLSX.utils.sheet_to_json(ws,{defval:'',raw:true});
+      });
+      const candidato=converterBackupExcelParaDados(planilhas,Store.data);
+      const totalContagens=candidato.counts.length;
+      const totalFechamentos=Object.keys(candidato.fechamentos).length;
+      const confirmar=window.confirm(
+        'Restaurar este backup?\n\n'+
+        totalContagens+' contagem(ns)\n'+
+        totalFechamentos+' fechamento(s)\n'+
+        candidato.prices.length+' preço(s)\n'+
+        candidato.items.length+' item(ns)\n\n'+
+        'Os dados operacionais atuais deste navegador serão substituídos pelos dados do backup.'
+      );
+      if(!confirmar) return false;
+
+      const beforeData=Store.data;
+      let rawBefore=null;
+      try{ rawBefore=localStorage.getItem(LS_KEY); }catch(ignore){}
+      try{
+        Store.data=Store.normalizeLoadedData(candidato);
+        Store.syncFromSeed(false);
+        Store.save();
+        fechamentoSelecionado=null;
+        fechamentoItemSelecionado=null;
+        responsavelEditMode=false;
+        renderView();
+      }catch(err){
+        Store.data=beforeData;
+        try{
+          if(rawBefore===null) localStorage.removeItem(LS_KEY);
+          else localStorage.setItem(LS_KEY,rawBefore);
+        }catch(rollbackErr){ console.error('Falha ao restaurar os dados anteriores:',rollbackErr); }
+        throw err;
+      }
+      showToast('success','Backup restaurado',totalContagens+' contagem(ns) e '+totalFechamentos+' fechamento(s) foram restaurados. Você pode continuar o inventário normalmente.',10000);
+      return true;
+    }catch(err){
+      console.error('Falha ao restaurar backup Excel:',err);
+      throw actionError(err&&err.message?err.message:'Não foi possível restaurar o arquivo selecionado.','Falha na restauração');
+    }finally{
+      if(input) input.value='';
+    }
+  });
+}
+
 function renderFechamento(){
   /* O identificador principal do inventário no Fechamento continua sendo
      o Cód.Inv. A lista respeita a ordem de primeira aparição dos inventários,
@@ -2866,6 +3034,8 @@ function renderFechamento(){
       <div class="field"><label class="flabel" for="fechMesPrint">Imprimir mês todo</label><input class="input" type="month" id="fechMesPrint" style="width:160px;" value="${escapeHtml((grupoAtual&&grupoAtual.competencia)||monthKey(todayISO()))}"></div>
       <button class="btn btn-sm" id="btnPrintMes">Imprimir mês todo</button>
       <button class="btn btn-sm" id="btnBackupExcel">Exportar Backup Excel</button>
+      <button class="btn btn-sm" id="btnRestoreBackup">Restaurar Backup Excel</button>
+      <input type="file" id="fileRestoreBackup" accept=".xlsx,.xls" style="display:none;">
       <button class="btn btn-primary btn-sm" id="btnPrintCapa">Imprimir / Salvar PDF</button>
     </div>
   </div>
@@ -3079,6 +3249,16 @@ function hookFechamento(){
   if(btnBackup) btnBackup.addEventListener('click', function(){
     exportarBackupInventarioExcel(btnBackup);
   });
+
+  const btnRestore=document.getElementById('btnRestoreBackup');
+  const fileRestore=document.getElementById('fileRestoreBackup');
+  if(btnRestore&&fileRestore){
+    btnRestore.addEventListener('click',function(){ fileRestore.click(); });
+    fileRestore.addEventListener('change',function(){
+      const file=fileRestore.files&&fileRestore.files[0];
+      if(file) importarBackupInventarioExcel(file,fileRestore,btnRestore);
+    });
+  }
 
   if(!fechamentoSelecionado || !fechamentoItemSelecionado) return;
   const fechData = getFechamentoData(fechamentoSelecionado, fechamentoItemSelecionado);
