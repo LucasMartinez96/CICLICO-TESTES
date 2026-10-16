@@ -1064,6 +1064,23 @@ function buildCodInv(dataISO, numeroInventario){
   return mm + '-' + String(seq).padStart(3, '0');
 }
 
+/* Trava manual: o Nº Inventário pode se repetir em meses diferentes, mas
+   não pode ser gravado duas vezes dentro da mesma competência mensal. */
+function numeroInventarioRepetidoNoMes(dataISO, numeroInventario, ignoreId){
+  const comp = monthKey(dataISO);
+  const raw = normalizeText(numeroInventario);
+  if(!comp || !raw) return false;
+  const canonical = function(value){
+    const text = normalizeText(value);
+    if(/^\d+(?:\.0+)?$/.test(text)) return String(parseInt(text.replace(/\.0+$/,''),10));
+    return text.toUpperCase();
+  };
+  const alvo = canonical(raw);
+  return Store.data.counts.some(function(c){
+    return c && c.id!==ignoreId && monthKey(c.data)===comp && canonical(c.numeroInventario)===alvo;
+  });
+}
+
 /* Função mantida por compatibilidade com versões anteriores.
    A importação mensal não usa mais ordenação automática: a tela respeita
    a ordem em que os registros chegam do Excel. */
@@ -2310,6 +2327,11 @@ function openContagemForm(existing){
       else if(!isValidISODate(data)){ setFieldError(fields.data,'Informe uma data válida.'); errors.push('A Data é inválida.'); }
       if(!responsavel){ setFieldError(fields.responsavel,'Informe o responsável pela contagem.'); errors.push('Informe o Responsável.'); }
       if(!numInv){ setFieldError(fields.numInv,'Informe o número do inventário.'); errors.push('Informe o Nº Inventário.'); }
+      else if(isValidISODate(data) && numeroInventarioRepetidoNoMes(data,numInv,existing?existing.id:null)){
+        const compLabel=competenciaLabel(monthKey(data));
+        setFieldError(fields.numInv,'Este Nº Inventário já existe em '+compLabel+'. Use outro número ou edite o lançamento existente.');
+        errors.push('O Nº Inventário '+numInv+' já existe em '+compLabel+'.');
+      }
       if(!local){ setFieldError(fields.local,'Informe o local da contagem.'); errors.push('Informe o Local.'); }
       if(!item){ setFieldError(fields.item,'Informe o PN do item.'); errors.push('Informe o PN.'); }
       else if(!findItem(item)){ setFieldError(fields.item,'Este PN não existe no Cadastro de Itens. Cadastre-o antes de lançar a contagem.'); errors.push('O PN '+item+' não está cadastrado.'); }
