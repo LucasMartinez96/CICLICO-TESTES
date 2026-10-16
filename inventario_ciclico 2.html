@@ -195,6 +195,8 @@ label.flabel{font-size:11.5px; color:var(--muted); text-transform:uppercase; let
 
 /* Table */
 .tbl-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:10px;}
+/* V22 — na Contagem Cíclica, a rolagem acontece dentro da tabela para manter o cabeçalho sempre visível. */
+.ctg-table-wrap{max-height:calc(100vh - 190px); overflow:auto;}
 table.dtbl{width:100%; border-collapse:collapse; font-size:12.5px; white-space:nowrap;}
 table.dtbl thead th{
   position:sticky; top:0; background:var(--panel-2); z-index:1;
@@ -1151,6 +1153,14 @@ function getFechamentoData(codinv, item){
   return Store.data.fechamentos[key];
 }
 
+/* V22 — toda capa deve ter responsável. Um nome salvo no Fechamento tem
+   prioridade; quando não existir, usa automaticamente o responsável da contagem. */
+function responsavelDaCapa(fechData, row){
+  const salvo = fechData ? normalizeText(fechData.responsavelFechamento) : '';
+  if(salvo) return salvo;
+  return row ? normalizeText(row.responsavel) : '';
+}
+
 let precosBusca = '';
 /* Mês de referência para atualização geral de preços. Importações em lote
    passam a valer no primeiro dia do mês escolhido; atualizações individuais
@@ -2054,7 +2064,7 @@ function renderContagem(){
     </div>
   </div>
 
-  <div class="tbl-wrap">
+  <div class="tbl-wrap ctg-table-wrap">
     <table class="dtbl">
       <thead><tr>
         <th class="no-print bulk-select-cell"><input type="checkbox" class="bulk-check" id="ctgSelectAll" aria-label="Selecionar todos os lançamentos exibidos" title="Selecionar todos os lançamentos exibidos"></th>
@@ -3003,6 +3013,7 @@ function renderFechamento(){
 
   // ---- Responsável opcional do fechamento (somente nome; sem data) ----
   const responsavelSalvo = fechData ? (fechData.responsavelFechamento||'') : '';
+  const responsavelCapa = responsavelDaCapa(fechData, row);
   const responsavelModoEdicao = responsavelEditMode || !responsavelSalvo;
   const responsavelEditHtml = responsavelModoEdicao ? (
     '<div class="field"><label class="flabel" for="respNomeInput">Nome do responsável (opcional)</label><input class="input" id="respNomeInput" placeholder="Nome do Responsável" value="'+escapeHtml(responsavelSalvo)+'"></div>'+
@@ -3158,7 +3169,7 @@ function renderFechamento(){
       </div>
       <div class="closing-person">
         <div class="closing-role">Responsável</div>
-        <div class="closing-name">${responsavelSalvo?escapeHtml(responsavelSalvo):'—'}</div>
+        <div class="closing-name">${responsavelCapa?escapeHtml(responsavelCapa):'—'}</div>
       </div>
     </div>
   </div>
