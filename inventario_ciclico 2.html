@@ -2003,8 +2003,13 @@ function exportDashboardPNG(button){
     if(typeof html2canvas==='undefined') throw actionError('A biblioteca necessária para gerar o PNG não foi carregada. Verifique sua conexão e recarregue a ferramenta.','PNG indisponível');
     let canvas;
     try{
+      const detailTitle=Array.from(el.querySelectorAll('.section-title')).find(function(node){
+        return normalizeText(node.textContent)==='DETALHAMENTO DOS RESULTADOS HISTORICO POR DATA';
+      });
+      const detailCard=detailTitle?detailTitle.closest('.card'):null;
+      const detailHeight=detailCard?detailCard.offsetHeight:0;
       const captureWidth=Math.max(el.scrollWidth,el.clientWidth||0,1200);
-      const captureHeight=Math.max(el.scrollHeight,el.clientHeight||0,800);
+      const captureHeight=Math.max(el.scrollHeight-detailHeight,el.clientHeight||0,800);
       canvas=await html2canvas(el,{
         backgroundColor:'#12151A',
         scale:2,
@@ -2034,6 +2039,13 @@ function exportDashboardPNG(button){
           if(clonedMain){
             clonedMain.style.height='auto';
             clonedMain.style.overflow='visible';
+          }
+          const detalheResultados=Array.from(doc.querySelectorAll('.section-title')).find(function(node){
+            return normalizeText(node.textContent)==='DETALHAMENTO DOS RESULTADOS HISTORICO POR DATA';
+          });
+          if(detalheResultados){
+            const detalheCard=detalheResultados.closest('.card');
+            if(detalheCard) detalheCard.style.display='none';
           }
           const fabricaCard=Array.from(doc.querySelectorAll('.section-title')).find(function(node){
             return normalizeText(node.textContent)==='ACURACIDADE COMPARATIVA POR FABRICA';
