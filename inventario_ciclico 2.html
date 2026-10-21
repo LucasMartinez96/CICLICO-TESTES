@@ -131,10 +131,11 @@ nav.navlist{flex:1; padding:8px 12px; display:flex; flex-direction:column; gap:2
 .section-title::before{content:''; width:4px; height:16px; background:var(--amber); border-radius:2px; display:inline-block;}
 
 .btn{
-  display:inline-flex; align-items:center; gap:6px;
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  min-height:36px;
   background:var(--panel-2); border:1px solid var(--line); color:var(--text);
   padding:8px 14px; border-radius:8px; font-size:13px; font-weight:500;
-  transition:border-color .12s, background .12s;
+  transition:border-color .12s, background .12s, box-shadow .12s;
 }
 .btn:hover{border-color:var(--muted-2);}
 .btn:disabled{cursor:not-allowed; opacity:.62; filter:saturate(.7);}
@@ -149,7 +150,7 @@ nav.navlist{flex:1; padding:8px 12px; display:flex; flex-direction:column; gap:2
 .btn-ghost:hover{background:var(--panel-2); border-color:var(--line);}
 .btn-danger{color:var(--red); border-color:#5a2a2c;}
 .btn-danger:hover{background:#2a1416;}
-.btn-sm{padding:5px 10px; font-size:12px; border-radius:6px;}
+.btn-sm{min-height:32px; padding:6px 10px; font-size:12px; border-radius:6px;}
 
 .input, select.input, textarea.input{
   background:var(--bg); border:1px solid var(--line); border-radius:8px;
@@ -157,6 +158,16 @@ nav.navlist{flex:1; padding:8px 12px; display:flex; flex-direction:column; gap:2
   transition:border-color .12s;
 }
 .input:focus, select.input:focus{border-color:var(--amber);}
+button:focus-visible,
+.btn:focus-visible,
+.navlist button:focus-visible,
+.input:focus-visible,
+select.input:focus-visible,
+textarea.input:focus-visible,
+#responsavelInput:focus-visible{
+  outline:2px solid var(--amber);
+  outline-offset:2px;
+}
 .input.is-invalid, select.input.is-invalid, textarea.input.is-invalid{border-color:var(--red) !important; box-shadow:0 0 0 2px rgba(229,72,77,.14);}
 .input.is-valid, select.input.is-valid, textarea.input.is-valid{border-color:var(--teal);}
 label.flabel{font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; display:block; font-weight:600;}
@@ -322,11 +333,67 @@ table.dtbl.hist-table tfoot td{
   .stat-grid{grid-template-columns:repeat(3,1fr);}
 }
 @media (max-width:860px){
+  #app{flex-direction:column; height:100vh;}
+  .sidebar{
+    width:100%; min-width:0; padding:0;
+    border-right:none; border-bottom:1px solid var(--line);
+    flex-direction:row; align-items:stretch;
+  }
+  .brand{
+    min-width:170px; padding:10px 14px; margin:0;
+    border-bottom:none; border-right:1px solid var(--line);
+    display:flex; flex-direction:column; justify-content:center;
+  }
+  .brand .mark{font-size:21px;}
+  .brand .sub{font-size:8.5px; letter-spacing:1px; white-space:nowrap;}
+  nav.navlist{
+    flex:1; min-width:0; padding:6px 8px;
+    flex-direction:row; gap:4px; overflow-x:auto; overflow-y:hidden;
+    scrollbar-width:thin;
+  }
+  .navlist button{
+    flex:0 0 auto; min-height:44px; padding:8px 11px;
+    border-left:none; border-bottom:3px solid transparent;
+    white-space:nowrap;
+  }
+  .navlist button.active{border-left:none; border-bottom-color:var(--amber);}
+  .sidebar-foot{display:none;}
+  .main{min-height:0;}
+  .topbar{height:auto; min-height:52px; padding:8px 14px; gap:10px;}
+  .topbar .meta{gap:10px; min-width:0;}
+  #dbStamp{display:none;}
+  .content{padding:16px;}
+  .toolbar{align-items:flex-start;}
+  .toolbar .left{width:100%;}
+  .toolbar .left:last-child{justify-content:flex-end;}
+  .searchbox{width:min(100%,320px);}
   .kpi-row{grid-template-columns:repeat(2,1fr);}
   .two-col{grid-template-columns:1fr;}
   .stat-grid{grid-template-columns:repeat(2,1fr);}
+  .ctg-table-wrap{max-height:calc(100vh - 250px);}
+  .btn,.btn-sm{min-height:44px;}
 }
 @media (max-width:520px){
+  .sidebar{display:block;}
+  .brand{
+    width:100%; min-width:0; padding:9px 12px;
+    border-right:none; border-bottom:1px solid var(--line);
+    flex-direction:row; align-items:center; justify-content:space-between; gap:12px;
+  }
+  .brand .sub{margin-top:0; overflow:hidden; text-overflow:ellipsis;}
+  nav.navlist{width:100%; padding:5px 8px 7px;}
+  .navlist button .num{display:none;}
+  .topbar{align-items:flex-start;}
+  .topbar .title{font-size:19px; padding-top:7px;}
+  .pill-user{max-width:52vw;}
+  #responsavelInput{width:100%; min-width:0;}
+  .content{padding:12px;}
+  .toolbar{gap:10px;}
+  .toolbar .left{gap:8px;}
+  .toolbar .left:last-child{justify-content:flex-start;}
+  .toolbar .field{width:100% !important;}
+  .toolbar .input,.toolbar select.input,.searchbox{width:100% !important;}
+  .toolbar .btn{flex:1 1 150px;}
   .kpi-row{grid-template-columns:1fr;}
   .stat-grid{grid-template-columns:1fr;}
   .gauge-value{font-size:28px;}
@@ -335,6 +402,7 @@ table.dtbl.hist-table tfoot td{
   .audresp-row{flex-direction:column; align-items:stretch;}
   .bulk-delete-list li{grid-template-columns:1fr; gap:3px;}
   .bulk-delete-list .bulk-meta{text-align:left; white-space:normal;}
+  .ctg-table-wrap{max-height:calc(100vh - 320px);}
 }
 
 /* Fechamento / capa */
