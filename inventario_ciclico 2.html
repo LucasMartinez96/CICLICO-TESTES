@@ -2002,15 +2002,67 @@ function exportDashboardPNG(button){
     if(!el) throw actionError('A área do dashboard não foi encontrada. Recarregue a ferramenta.','Dashboard indisponível');
     if(typeof html2canvas==='undefined') throw actionError('A biblioteca necessária para gerar o PNG não foi carregada. Verifique sua conexão e recarregue a ferramenta.','PNG indisponível');
     let canvas;
-    try{ canvas=await html2canvas(el,{backgroundColor:'#12151A',scale:2,useCORS:true,allowTaint:false,logging:false}); }
-    catch(err){ console.error('Falha no html2canvas:',err); throw actionError('Não foi possível capturar o dashboard. Isso pode ocorrer por falta de memória ou falha ao carregar uma imagem. Feche outras abas e tente novamente.','Falha ao gerar imagem'); }
+    try{
+      const captureWidth=Math.max(el.scrollWidth,el.clientWidth||0,1200);
+      const captureHeight=Math.max(el.scrollHeight,el.clientHeight||0,800);
+      canvas=await html2canvas(el,{
+        backgroundColor:'#12151A',
+        scale:2,
+        useCORS:true,
+        allowTaint:false,
+        logging:false,
+        width:captureWidth,
+        height:captureHeight,
+        windowWidth:captureWidth,
+        windowHeight:captureHeight,
+        scrollX:0,
+        scrollY:0,
+        onclone:function(doc){
+          const clonedContent=doc.getElementById('content');
+          if(clonedContent){
+            clonedContent.style.overflow='visible';
+            clonedContent.style.height='auto';
+            clonedContent.style.maxHeight='none';
+            clonedContent.style.paddingBottom='24px';
+          }
+          const clonedApp=doc.getElementById('app');
+          if(clonedApp){
+            clonedApp.style.height='auto';
+            clonedApp.style.overflow='visible';
+          }
+          const clonedMain=doc.querySelector('.main');
+          if(clonedMain){
+            clonedMain.style.height='auto';
+            clonedMain.style.overflow='visible';
+          }
+          const fabricaCard=Array.from(doc.querySelectorAll('.section-title')).find(function(node){
+            return normalizeText(node.textContent)==='ACURACIDADE COMPARATIVA POR FABRICA';
+          });
+          if(fabricaCard && typeof fabricaCompareChart!=='undefined' && fabricaCompareChart && typeof fabricaCompareChart.toBase64Image==='function'){
+            const box=fabricaCard.closest('.card');
+            const clonedCanvas=box?box.querySelector('#fabricaCompareChartCanvas'):null;
+            if(clonedCanvas){
+              const img=doc.createElement('img');
+              img.src=fabricaCompareChart.toBase64Image('image/png',1);
+              img.alt='Acuracidade Comparativa por Fábrica';
+              img.style.width='100%';
+              img.style.height='320px';
+              img.style.display='block';
+              img.style.objectFit='contain';
+              clonedCanvas.parentNode.replaceChild(img,clonedCanvas);
+            }
+          }
+        }
+      });
+    }
+    catch(err){ console.error('Falha no html2canvas:',err); throw actionError('Não foi possível capturar o dashboard completo, incluindo o gráfico de acuracidade por fábrica. Feche outras abas e tente novamente.','Falha ao gerar imagem'); }
     if(!canvas || !canvas.width || !canvas.height) throw actionError('A imagem do dashboard não pôde ser criada. Tente novamente.','Falha ao gerar imagem');
     const blob=await new Promise(function(resolve,reject){
       try{ canvas.toBlob(function(value){ value?resolve(value):reject(new Error('Canvas vazio')); },'image/png'); }
       catch(err){ reject(err); }
     }).catch(function(err){ console.error('Falha ao converter canvas:',err); throw actionError('Não foi possível preparar o arquivo PNG. O navegador pode estar sem memória.','Falha ao gerar imagem'); });
     downloadBlob(blob,'dashboard-cicloestoque-'+todayISO()+'.png');
-    showToast('success','PNG exportado','A imagem do dashboard foi gerada com sucesso.');
+    showToast('success','PNG exportado','A imagem do dashboard foi gerada com o gráfico de acuracidade comparativa por fábrica.');
     return true;
   });
 }
