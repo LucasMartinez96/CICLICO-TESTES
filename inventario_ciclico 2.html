@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CicloEstoque :: Inventário Cíclico</title>
+<title>CicloEstoque V28 — Dashboard Inventário PRO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -570,6 +570,130 @@ tr.row-perda td:first-child{border-left-color:#c94040;}
 
 .hint{font-size:11.5px; color:var(--muted-2); margin-top:6px;}
 .divider{height:1px; background:var(--line); margin:18px 0;}
+</style>
+<style id="cicloestoque-v28-dashboard">
+/* V28 — apresentação do dashboard. Nenhum seletor altera tabelas operacionais ou capas. */
+.brand .mark span{color:#6aaefb}
+.navlist button[data-view="dashboard"].active{border-left-color:#6aaefb}
+.navlist button[data-view="dashboard"].active{border-bottom-color:#6aaefb}
+.navlist button[data-view="dashboard"].active .num{color:#6aaefb}
+.v28-dashboard{
+  --bg:#101720;--panel:#172330;--panel-2:#1d2c3c;--line:#304153;
+  --text:#eff4f9;--muted:#b0becd;--muted-2:#8fa2b7;
+  --blue:#6aaefb;--teal:#53d5b5;--red:#ff8790;--amber:#f4c16c;
+  color:var(--text);font-family:var(--body);line-height:1.5;
+  display:flex;flex-direction:column;gap:20px;min-width:0;
+}
+.v28-dashboard *{min-width:0}
+.v28-dashboard ::selection{background:#23588a;color:#fff}
+.v28-dashboard button:focus-visible,.v28-dashboard input:focus-visible,.v28-dashboard [tabindex]:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.v28-dashboard input{color-scheme:dark;caret-color:var(--blue)}
+.v28-dashboard .v28-heading{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.v28-dashboard h1{font-family:var(--body);font-size:24px;font-weight:650;letter-spacing:-.025em;line-height:1.2;margin:0}
+.v28-dashboard .v28-heading p,.v28-dashboard .v28-note{color:var(--muted);font-size:12px;margin:0}
+.v28-dashboard .toolbar{margin:0;gap:12px;align-items:flex-end}
+.v28-dashboard .toolbar .left{align-items:flex-end}
+.v28-dashboard .flabel{font-size:12px;text-transform:none;letter-spacing:0}
+.v28-dashboard .input{background:#101a26;border-color:var(--line);min-height:40px}
+.v28-dashboard .input:focus{border-color:var(--blue)}
+.v28-dashboard .btn{font-size:12px;min-height:40px;border-color:var(--line);background:#213248;color:var(--text)}
+.v28-dashboard .btn:hover{background:#2a405b;border-color:var(--blue)}
+.v28-dashboard #btnExportPNG{background:#175caa;border-color:#3579c5;color:#fff}
+.v28-dashboard .card{padding:22px;background:var(--panel);border-color:var(--line);box-shadow:none;margin:0}
+.v28-dashboard .section-title{font-family:var(--body);font-size:15px;font-weight:650;text-transform:none;letter-spacing:0;margin:0;line-height:1.4}
+.v28-dashboard .section-title::before{display:none}
+.v28-dashboard .v28-section-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.v28-dashboard .v28-section-head p{font-size:12px;color:var(--muted);margin:0}
+.v28-dashboard .v28-executive{border-top-color:#4b8dd3}
+.v28-dashboard .v28-primary{display:grid;grid-template-columns:1fr 1fr 1.45fr .8fr;gap:22px;padding:0 0 22px}
+.v28-dashboard .v28-primary>div+div{border-left:1px solid var(--line);padding-left:22px}
+.v28-dashboard .v28-label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+.v28-dashboard .v28-number{display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.035em;font-size:clamp(30px,3vw,46px);font-weight:600;line-height:1.25;white-space:nowrap}
+.v28-dashboard .v28-money-large{font-size:clamp(18px,2.1vw,29px);white-space:normal;overflow-wrap:anywhere;letter-spacing:-.035em;padding-top:8px}
+.v28-dashboard .v28-primary small{display:block;font-size:12px;color:var(--muted);margin-top:8px}
+.v28-dashboard .v28-state{display:inline-block;font-size:11px;font-weight:600;line-height:1.45;margin-top:8px}
+.v28-dashboard .v28-good{color:var(--teal)!important}
+.v28-dashboard .v28-bad{color:var(--red)!important}
+.v28-dashboard .v28-watch{color:var(--amber)!important}
+.v28-dashboard .v28-neutral{color:var(--muted)!important}
+.v28-dashboard .v28-finance{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:20px;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.v28-dashboard .v28-finance strong{display:block;font-family:var(--mono);font-size:clamp(17px,1.7vw,23px);font-weight:500;letter-spacing:-.03em;overflow-wrap:anywhere}
+.v28-dashboard .v28-finance small{font-size:11px;color:var(--muted)}
+.v28-dashboard .v28-flow{display:grid;grid-template-columns:1fr 1fr 1.5fr;gap:24px;padding-top:18px}
+.v28-dashboard .v28-flow h3{font-size:12px;color:var(--blue);font-weight:600;margin:0 0 8px}
+.v28-dashboard .v28-flow dl{margin:0;display:grid;grid-template-columns:auto auto;column-gap:10px;row-gap:5px;font-size:12px}
+.v28-dashboard .v28-flow dt{color:var(--muted)}
+.v28-dashboard .v28-flow dd{margin:0;text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.v28-dashboard .v28-reading-note{font-size:12px;color:var(--muted);margin:16px 0 0;padding-top:12px;border-top:1px solid var(--line)}
+.v28-dashboard .v28-gauges{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.v28-dashboard .v28-gauge-main{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:14px}
+.v28-dashboard .gauge-value{font-family:var(--mono);font-size:32px;line-height:1.2;letter-spacing:-.03em;font-weight:500}
+.v28-dashboard .gauge-bar{position:relative;width:100%;height:10px;background:#0c151f;border-radius:3px;margin:18px 0 10px;overflow:visible}
+.v28-dashboard .gauge-fill{height:100%;border-radius:3px;transition:none}
+.v28-dashboard .gauge-meta-marker{position:absolute;top:-5px;height:20px;width:2px;background:var(--amber);border:0;transform:translateX(-1px)}
+.v28-dashboard .gauge-labels{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.v28-dashboard .gauge-labels b{color:var(--amber);font-weight:500}
+.v28-dashboard .v28-attention{padding:16px 20px;border:1px solid #5c513d;border-radius:12px;background:#202730}
+.v28-dashboard .v28-attention h2{font-size:14px;font-weight:650;color:var(--amber);margin:0 0 10px}
+.v28-dashboard .v28-attention ul{display:grid;grid-template-columns:1fr 1fr;gap:8px 28px;list-style:none;padding:0;margin:0}
+.v28-dashboard .v28-attention li{font-size:12px;color:var(--text);padding:0;line-height:1.55}
+.v28-dashboard .v28-attention .v28-note{margin-top:10px}
+.v28-dashboard .v28-diagnostics{display:grid;grid-template-columns:1.2fr 1fr;gap:20px}
+.v28-dashboard .v28-diagnostics>.card{min-width:0}
+.v28-dashboard .chart-box{height:290px;position:relative;margin-top:16px;padding:0}
+.v28-dashboard .v28-timeline .chart-box{height:280px}
+.v28-dashboard .tbl-wrap{border-color:var(--line);border-radius:8px;scrollbar-color:#536a81 #101720}
+.v28-dashboard .v28-ira table{min-width:1180px;width:100%;font-size:12px}
+.v28-dashboard .v28-ira th{white-space:normal;min-width:70px;font-size:11px;padding:10px 8px;letter-spacing:0;text-transform:none;line-height:1.5;color:var(--muted);background:#1d2c3c}
+.v28-dashboard .v28-ira td{padding:14px 8px;font-size:12px;letter-spacing:-.025em}
+.v28-dashboard .v28-ira th:first-child,.v28-dashboard .v28-ira td:first-child{position:sticky;left:0;background:#172330;z-index:2;min-width:52px;text-align:left}
+.v28-dashboard .v28-ira td:first-child b{font-family:var(--body);color:var(--blue);font-size:15px}
+.v28-dashboard .v28-ira .v28-result{background:#21322f}
+.v28-dashboard .v28-ira .v28-result.v28-bad{background:#342b34}
+.v28-dashboard .v28-ira .v28-result.v28-neutral{background:transparent}
+.v28-dashboard .v28-ira td:nth-child(12){color:var(--amber)}
+.v28-dashboard table.dtbl th.right{text-align:right}
+.v28-dashboard .hist-table th{font-size:11px;text-transform:none;letter-spacing:0}
+.v28-dashboard .hist-table td{font-size:12px;padding:12px 10px}
+.v28-dashboard .hist-table td[style*="var(--teal)"]{color:var(--amber)!important}
+.v28-dashboard .v28-legend{color:var(--muted);font-size:12px;margin-top:10px}
+.v28-dashboard .v28-empty{font-size:13px;color:var(--muted);padding:12px 0 0}
+.v28-dashboard.v28-png .v28-ira .tbl-wrap{overflow:visible}
+.v28-dashboard.v28-png .v28-ira table{min-width:0}
+.v28-dashboard.v28-png .v28-ira th:first-child,.v28-dashboard.v28-png .v28-ira td:first-child{position:static}
+@media(min-width:1800px){.v28-dashboard{max-width:1660px;margin:0 auto}}
+@media(max-width:1200px){
+  .v28-dashboard .v28-primary{grid-template-columns:1fr 1fr;gap:20px}
+  .v28-dashboard .v28-primary>div:nth-child(3){border-left:0;padding-left:0}
+  .v28-dashboard .v28-finance{grid-template-columns:1fr 1fr}
+  .v28-dashboard .v28-flow{grid-template-columns:1fr 1fr}
+  .v28-dashboard .v28-flow>div:last-child{grid-column:1/-1}
+}
+@media(max-width:850px){
+  .v28-dashboard{gap:16px}
+  .v28-dashboard .card{padding:18px}
+  .v28-dashboard .v28-diagnostics{grid-template-columns:1fr}
+  .v28-dashboard .v28-attention ul{grid-template-columns:1fr}
+  .v28-dashboard h1{font-size:22px}
+}
+@media(max-width:600px){
+  .v28-dashboard .v28-gauges{grid-template-columns:1fr;gap:16px}
+  .v28-dashboard .v28-primary{gap:18px 12px}
+  .v28-dashboard .v28-primary>div+div{padding-left:12px}
+  .v28-dashboard .v28-primary>div:nth-child(3){padding-left:0}
+  .v28-dashboard .v28-number{font-size:29px}
+  .v28-dashboard .v28-money-large{font-size:18px}
+  .v28-dashboard .v28-finance{gap:18px 12px}
+  .v28-dashboard .v28-finance strong{font-size:17px}
+  .v28-dashboard .v28-flow{grid-template-columns:1fr;gap:18px}
+  .v28-dashboard .v28-flow>div:last-child{grid-column:auto}
+  .v28-dashboard .toolbar .left{width:100%}
+  .v28-dashboard .toolbar .field{flex:1 1 120px;width:auto!important}
+  .v28-dashboard .toolbar .btn{flex:1 1 auto}
+  .v28-dashboard .section-title{font-size:14px}
+  .v28-dashboard .chart-box{height:270px}
+}
+@media(max-width:360px){.v28-dashboard .v28-number{font-size:24px;white-space:normal;overflow-wrap:anywhere}.v28-dashboard .v28-money-large{font-size:17px}}
 </style>
 </head>
 <body>
@@ -1193,7 +1317,7 @@ function resolveImportedPn(value){
    ========================================================================= */
 
 const VIEW_TITLES = {
-  dashboard: 'Dashboard',
+  dashboard: 'Dashboard · V28',
   contagem: 'Contagem Cíclica',
   fechamento: 'Fechamento',
   precos: 'Cadastro de Preços',
@@ -1539,6 +1663,81 @@ function computeFabricaStats(filtered){
 }
 
 /* ================= DASHBOARD ================= */
+/* V28: helpers de apresentação; leem os resultados existentes e não gravam dados. */
+function v28Tone(value, meta, hasBase){
+  return !hasBase || !Number.isFinite(value) ? 'v28-neutral' : value < meta ? 'v28-bad' : 'v28-good';
+}
+function v28Status(value, meta, hasBase){
+  return !hasBase || !Number.isFinite(value) ? 'Sem base para avaliar a meta' : value < meta ? 'Abaixo da meta' : 'Dentro da meta';
+}
+function v28SignedTone(value){ return value<0?'v28-bad':value>0?'v28-watch':'v28-neutral'; }
+function v28FactoryColors(nomes,valores,stats){
+  const valid=nomes.map(function(n,i){return {name:n,value:valores[i],base:stats[n].vteo};}).filter(function(f){return f.name!=='SEM FÁBRICA' && f.base>0 && Number.isFinite(f.value);});
+  const min=Math.min.apply(null,valid.map(function(f){return f.value;}));
+  const max=Math.max.apply(null,valid.map(function(f){return f.value;}));
+  return nomes.map(function(n,i){return stats[n].vteo<=0 || n==='SEM FÁBRICA'?'#8fa2b7':min<max && valores[i]===min?'#f4c16c':'#6aaefb';});
+}
+function v28ExportChart(doc,id,source){
+  const canvas=doc.getElementById(id);if(!canvas || !source)return;
+  const box=canvas.closest('.chart-box');if(!box)return;
+  const cloneOption=function(value){
+    if(Array.isArray(value))return value.map(cloneOption);
+    if(value && typeof value==='object'){
+      const result={};Object.keys(value).forEach(function(k){result[k]=cloneOption(value[k]);});return result;
+    }return value;
+  };
+  const config=source.config;
+  const options=cloneOption(config.options);
+  options.responsive=false;options.maintainAspectRatio=false;options.animation=false;options.devicePixelRatio=2;
+  canvas.width=Math.round(box.getBoundingClientRect().width);canvas.height=Math.round(box.getBoundingClientRect().height);
+  canvas.style.width=canvas.width+'px';canvas.style.height=canvas.height+'px';
+  const chart=new Chart(canvas,{type:config.type,data:cloneOption(config.data),options:options,plugins:config.plugins});
+  try{
+    chart.update('none');const img=doc.createElement('img');img.src=chart.toBase64Image('image/png',1);
+    img.alt=canvas.getAttribute('aria-label')||'Gráfico do inventário';img.style.width='100%';img.style.height='100%';img.style.display='block';img.style.objectFit='contain';
+    canvas.parentNode.replaceChild(img,canvas);
+  }finally{chart.destroy();}
+}
+function v28Attention(curvas, fabricas, nomes, valores, net, gross, sobra, falta, hasBase){
+  const notices=[];
+  const validFabs=nomes.map(function(name,i){return {name:name,value:valores[i],base:fabricas[name].vteo};})
+    .filter(function(f){return f.name!=='SEM FÁBRICA' && f.base>0 && Number.isFinite(f.value);});
+  if(validFabs.length>1){
+    const min=Math.min.apply(null,validFabs.map(function(f){return f.value;}));
+    const lowest=validFabs.filter(function(f){return f.value===min;});
+    if(lowest.length<validFabs.length) notices.push(lowest.map(function(f){return f.name;}).join(' e ')+(lowest.length===1?' apresenta':' apresentam')+' a menor acuracidade entre as fábricas com base em valor: '+fmtPct(min/100)+'.');
+  }
+  const validCurves=curvas.filter(function(r){return r.valorSistema>0 && Number.isFinite(r.pctNetV);});
+  const negative=validCurves.filter(function(r){return r.diffNetValor<0;});
+  if(negative.length){
+    const min=Math.min.apply(null,negative.map(function(r){return r.diffNetValor;}));
+    const worst=negative.filter(function(r){return r.diffNetValor===min;});
+    notices.push((worst.length===1?'Curva ':'Curvas ')+worst.map(function(r){return r.curva;}).join(' e ')+(worst.length===1?' concentra':' concentram')+' o maior impacto financeiro líquido negativo: '+fmtMoney(min)+(worst.length>1?' em cada curva':'')+'.');
+  }
+  const below=validCurves.filter(function(r){return r.meta!==null && r.pctNetV<r.meta;});
+  if(below.length) notices.push((below.length===1?'Curva ':'Curvas ')+below.map(function(r){return r.curva;}).join(', ')+(below.length===1?' está':' estão')+' abaixo da respectiva meta de NET em valor.');
+  if(hasBase && sobra>0 && falta<0 && gross>Math.abs(net)) notices.push('Há compensação entre sobras e faltas: GROSS de '+fmtMoney(gross)+' e NET de '+fmtMoney(net)+'.');
+  if(!notices.length) return '';
+  return '<aside class="v28-attention" aria-labelledby="v28-attention-title"><h2 id="v28-attention-title">Atenção da Gestão</h2><ul>'+notices.map(function(s){return '<li>'+escapeHtml(s)+'</li>';}).join('')+'</ul><p class="v28-note">Prioridades de investigação no período. Estes resultados não determinam a causa da divergência.</p></aside>';
+}
+function v28ChartLabelPlugin(id, orientation){
+  return {id:id,afterDatasetsDraw:function(chart){
+    const ds=chart.data.datasets[0],meta=chart.getDatasetMeta(0),ctx=chart.ctx;
+    if(!ds || !meta || !ctx)return;
+    ctx.save();ctx.fillStyle='#eff4f9';ctx.font='600 '+(chart.width<450?'13':'15')+'px Inter, Arial, sans-serif';ctx.textBaseline='middle';
+    meta.data.forEach(function(bar,i){
+      const v=ds.data[i];if(v===null || !Number.isFinite(Number(v)) || !bar)return;
+      const text=fmtPct(Number(v)/100);
+      if(orientation==='horizontal'){
+        /* Rótulo em uma coluna própria: legível inclusive para zero e valores negativos. */
+        ctx.textAlign='left';ctx.fillText(text,chart.chartArea.right+12,bar.y);
+      }else{
+        ctx.textAlign='center';const y=Math.max(chart.chartArea.top+12,Math.min(chart.chartArea.bottom-12,bar.y-12));ctx.fillText(text,bar.x,y);
+      }
+    });ctx.restore();
+  }};
+}
+
 function renderDashboard(){
   const all = enrichedCounts();
   const de = dashFilter.de, ate = dashFilter.ate;
@@ -1666,7 +1865,7 @@ function renderDashboard(){
     const g = fabricaStats[f];
     return g.vteo ? +(100*(1-Math.abs(g.vfin-g.vteo)/g.vteo)).toFixed(2) : 0;
   });
-  const fabricaCores = fabricaNomes.map(function(f){ return f==='FAB1' ? '#F2A93B' : '#2FBF9F'; });
+  const fabricaCores = v28FactoryColors(fabricaNomes,fabricaData,fabricaStats);
 
   /* CORREÇÃO: atribuição direta em JS (nunca via <script> injetado no HTML,
      pois esse tipo de tag não executa quando inserida via innerHTML). Isso
@@ -1681,128 +1880,119 @@ function renderDashboard(){
   };
 
   return `
-  <div class="toolbar">
-    <div class="left">
-      <div class="field"><label class="flabel">De</label><input type="date" class="input" id="dashDe" value="${de}"></div>
-      <div class="field"><label class="flabel">Até</label><input type="date" class="input" id="dashAte" value="${ate}"></div>
-      <button class="btn btn-sm" id="dashClearFilter" style="align-self:flex-end;">Limpar período</button>
-    </div>
-    <div class="left">
-      <button class="btn btn-sm" id="btnExportDash">Exportar Excel</button>
-      <button class="btn btn-sm" id="btnExportPNG">Exportar PNG</button>
-    </div>
-  </div>
-
-  <!-- ===== TOPO — RESULT: GROSS / NET (ONE PAGE) ===== -->
-  <div class="card onepage-block">
-    <div class="section-title">Resultado do Inventário — Gross / Net</div>
-    <div class="stat-grid">
-      <div class="stat-item"><span class="stat-lbl">Valor Inventário R$</span><span class="stat-val">${fmtMoney(valorInventario)}</span></div>
-      <div class="stat-item"><span class="stat-lbl">Total de Peças</span><span class="stat-val">${fmtNum(totalPecas)}</span></div>
-      <div class="stat-item"><span class="stat-lbl">Sobra (Peças)</span><span class="stat-val" style="color:var(--teal)">${fmtNum(sobraPecas)}</span></div>
-      <div class="stat-item"><span class="stat-lbl">Falta (Peças)</span><span class="stat-val" style="color:var(--red)">${fmtNum(faltaPecas)}</span></div>
-      <div class="stat-item"><span class="stat-lbl">TT Net (Peças)</span><span class="stat-val" style="color:${ttNetPecas<0?'var(--red)':(ttNetPecas>0?'var(--teal)':'var(--text)')}">${fmtNum(ttNetPecas)}</span></div>
-      <div class="stat-item"><span class="stat-lbl">TT Gross (Peças)</span><span class="stat-val">${fmtNum(ttGrossPecas)}</span></div>
-      <div class="stat-item"><span class="stat-lbl">Sobra (R$)</span><span class="stat-val" style="color:var(--teal)">${fmtMoney(sobraValor)}</span></div>
-      <div class="stat-item"><span class="stat-lbl">Falta (R$)</span><span class="stat-val" style="color:var(--red)">${fmtMoney(faltaValor)}</span></div>
-      <div class="stat-item"><span class="stat-lbl">TT Net (R$)</span><span class="stat-val" style="color:${ttNetValor<0?'var(--red)':(ttNetValor>0?'var(--teal)':'var(--text)')}">${fmtMoney(ttNetValor)}</span></div>
-      <div class="stat-item"><span class="stat-lbl">TT Gross (R$)</span><span class="stat-val">${fmtMoney(ttGrossValor)}</span></div>
-    </div>
-    <div class="divider" style="margin:16px 0;"></div>
-    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
-      <div class="kpi ${filtered.length && pctGrossValor<META_NET_VALOR?'tone-red':'tone-teal'}"><div class="stripe"></div><div class="lbl">% Gross</div><div class="val">${fmtPct(pctGrossValor)}</div><div class="sub">${filtered.length} lançamentos</div></div>
-      <div class="kpi ${filtered.length && pctNetValor<META_NET_VALOR?'tone-red':'tone-teal'}"><div class="stripe"></div><div class="lbl">% Net</div><div class="val">${fmtPct(pctNetValor)}</div><div class="sub">meta ${fmtPct(META_NET_VALOR)}</div></div>
-      <div class="kpi tone-violet"><div class="stripe"></div><div class="lbl">Inventários realizados</div><div class="val">${qtdInventarios}</div><div class="sub">no período selecionado</div></div>
-    </div>
-  </div>
-
-  <!-- ===== CENTRO — Acuracidade em Peças / Acuracidade em Valor (NET) ===== -->
-  <div class="two-col onepage-block">
-    <div class="card">
-      <div class="section-title">Acuracidade de Inventário em Peças</div>
-      <div class="gauge-wrap">
-        <div class="gauge-value" style="color:${filtered.length && pctNetPecas<META_NET_PECAS?'var(--red)':'var(--teal)'}">${fmtPct(pctNetPecas)}</div>
-        <div class="gauge-bar">
-          <div class="gauge-fill" style="width:${Math.max(0,Math.min(100,pctNetPecas*100))}%; background:${filtered.length && pctNetPecas<META_NET_PECAS?'var(--red)':'var(--teal)'}"></div>
-          <div class="gauge-meta-marker" style="left:${Math.max(0,Math.min(100,META_NET_PECAS*100))}%" title="Meta"></div>
-        </div>
-        <div class="gauge-labels"><span>Resultado atual: <b class="mono">${fmtPct(pctNetPecas)}</b></span><span>Meta de peças: <b class="mono">${fmtPct(META_NET_PECAS)}</b></span></div>
+  <div class="v28-dashboard" id="v28-dashboard">
+    <header class="v28-heading">
+      <h1>Dashboard de inventário</h1>
+      <p>CicloEstoque V28 · Dashboard Inventário PRO</p>
+    </header>
+    <div class="toolbar">
+      <div class="left">
+        <div class="field"><label class="flabel" for="dashDe">De</label><input type="date" class="input" id="dashDe" value="${de}"></div>
+        <div class="field"><label class="flabel" for="dashAte">Até</label><input type="date" class="input" id="dashAte" value="${ate}"></div>
+        <button class="btn btn-sm" id="dashClearFilter">Limpar período</button>
+      </div>
+      <div class="left">
+        <button class="btn btn-sm" id="btnExportDash">Exportar Excel</button>
+        <button class="btn btn-sm" id="btnExportPNG">Exportar PNG</button>
       </div>
     </div>
-    <div class="card">
-      <div class="section-title">Acuracidade de Inventário em Valor (NET)</div>
-      <div class="gauge-wrap">
-        <div class="gauge-value" style="color:${filtered.length && pctNetValor<META_NET_VALOR?'var(--red)':'var(--teal)'}">${fmtPct(pctNetValor)}</div>
-        <div class="gauge-bar">
-          <div class="gauge-fill" style="width:${Math.max(0,Math.min(100,pctNetValor*100))}%; background:${filtered.length && pctNetValor<META_NET_VALOR?'var(--red)':'var(--teal)'}"></div>
-          <div class="gauge-meta-marker" style="left:${Math.max(0,Math.min(100,META_NET_VALOR*100))}%" title="Meta"></div>
-        </div>
-        <div class="gauge-labels"><span>Resultado NET (%): <b class="mono">${fmtPct(pctNetValor)}</b></span><span>Meta NET (%): <b class="mono">${fmtPct(META_NET_VALOR)}</b></span></div>
-      </div>
-    </div>
-  </div>
 
-  <!-- ===== Resultado do IRA por CURVA (tabela + gráfico) ===== -->
-  <div class="two-col onepage-block">
-    <div class="card">
-      <div class="section-title">Resultado do IRA por Curva</div>
-      <div class="tbl-wrap">
+    <section class="card v28-executive onepage-block" aria-labelledby="v28-result-title">
+      <div class="v28-section-head"><h2 class="section-title" id="v28-result-title">Resultado do Inventário — GROSS / NET</h2><p>${de||ate ? (de?fmtDate(de):'Início')+' a '+(ate?fmtDate(ate):'sem data final') : 'Todos os períodos'} · ${filtered.length} lançamentos</p></div>
+      <div class="v28-primary">
+        <div><span class="v28-label">GROSS · acuracidade em valor</span><strong class="v28-number ${v28Tone(pctGrossValor,META_NET_VALOR,valorInventario>0)}" data-metric="pctGrossValor">${fmtPct(pctGrossValor)}</strong><small>Divergências absolutas</small></div>
+        <div><span class="v28-label">NET · acuracidade em valor</span><strong class="v28-number ${v28Tone(pctNetValor,META_NET_VALOR,valorInventario>0)}" data-metric="pctNetValor">${fmtPct(pctNetValor)}</strong><span class="v28-state ${v28Tone(pctNetValor,META_NET_VALOR,valorInventario>0)}">${v28Status(pctNetValor,META_NET_VALOR,valorInventario>0)}</span><small>Meta NET ${fmtPct(META_NET_VALOR)}</small></div>
+        <div><span class="v28-label">Valor total inventariado · sistema</span><strong class="v28-number v28-money-large" data-metric="valorInventario">${fmtMoney(valorInventario)}</strong><small>Base em valor do inventário</small></div>
+        <div><span class="v28-label">Inventários realizados</span><strong class="v28-number" data-metric="qtdInventarios">${qtdInventarios}</strong><small>No período selecionado</small></div>
+      </div>
+      <div class="v28-finance">
+        <div><span class="v28-label">Diferença financeira líquida · NET</span><strong class="${v28SignedTone(ttNetValor)}" data-metric="ttNetValor">${fmtMoney(ttNetValor)}</strong><small>${ttNetValor<0?'Saldo de falta':ttNetValor>0?'Saldo de sobra':'Saldo líquido zero'}</small></div>
+        <div><span class="v28-label">Falta financeira</span><strong class="${faltaValor<0?'v28-bad':'v28-neutral'}" data-metric="faltaValor">${fmtMoney(faltaValor)}</strong><small>Diferenças negativas</small></div>
+        <div><span class="v28-label">Sobra financeira</span><strong class="${sobraValor>0?'v28-watch':'v28-neutral'}" data-metric="sobraValor">${fmtMoney(sobraValor)}</strong><small>Diferenças positivas</small></div>
+        <div><span class="v28-label">Divergência absoluta · GROSS</span><strong data-metric="ttGrossValor">${fmtMoney(ttGrossValor)}</strong><small>Sem compensação entre sinais</small></div>
+      </div>
+      <div class="v28-flow">
+        <div><h3>Estoque no sistema</h3><dl><dt>Total de peças</dt><dd data-metric="totalPecas">${fmtNum(totalPecas)}</dd><dt>Valor inventário</dt><dd>${fmtMoney(valorInventario)}</dd></dl></div>
+        <div><h3>Estoque físico contado</h3><dl><dt>Peças com contagem final</dt><dd data-metric="fisicoPecas">${fmtNum(histTotals.fin)}</dd><dt>Valor físico</dt><dd data-metric="fisicoValor">${fmtMoney(histTotals.vfin)}</dd></dl></div>
+        <div><h3>Divergência de peças</h3><dl><dt>Sobra</dt><dd class="${sobraPecas>0?'v28-watch':'v28-neutral'}" data-metric="sobraPecas">${fmtNum(sobraPecas)}</dd><dt>Falta</dt><dd class="${faltaPecas<0?'v28-bad':'v28-neutral'}" data-metric="faltaPecas">${fmtNum(faltaPecas)}</dd><dt>NET · diferença líquida</dt><dd class="${v28SignedTone(ttNetPecas)}" data-metric="ttNetPecas">${fmtNum(ttNetPecas)}</dd><dt>GROSS · diferença absoluta</dt><dd data-metric="ttGrossPecas">${fmtNum(ttGrossPecas)}</dd></dl></div>
+      </div>
+      <p class="v28-reading-note">${!filtered.length?'Nenhum lançamento no período selecionado.': 'GROSS mostra a magnitude das divergências. NET mostra o saldo após compensar sobras e faltas.'} ${filtered.some(function(c){return typeof c.contagemFinal!=='number';})?'Há contagens sem resultado final; o físico considera somente os resultados finais disponíveis.':''}</p>
+    </section>
+
+    <div class="v28-gauges onepage-block">
+      <section class="card" aria-labelledby="v28-pieces-title">
+        <h2 class="section-title" id="v28-pieces-title">Acuracidade de Inventário em Peças</h2>
+        <div class="v28-gauge-main"><strong class="gauge-value ${v28Tone(pctNetPecas,META_NET_PECAS,totalPecas>0 && filtered.some(function(c){return typeof c.contagemFinal==='number';}))}" data-metric="pctNetPecas">${fmtPct(pctNetPecas)}</strong><span class="v28-state ${v28Tone(pctNetPecas,META_NET_PECAS,totalPecas>0 && filtered.some(function(c){return typeof c.contagemFinal==='number';}))}">${v28Status(pctNetPecas,META_NET_PECAS,totalPecas>0 && filtered.some(function(c){return typeof c.contagemFinal==='number';}))}</span></div>
+        <div class="gauge-bar" aria-hidden="true"><div class="gauge-fill" style="width:${Math.max(0,Math.min(100,pctNetPecas*100))}%;background:var(${!totalPecas || !filtered.some(function(c){return typeof c.contagemFinal==='number';})?'--muted':pctNetPecas<META_NET_PECAS?'--red':'--teal'})"></div><div class="gauge-meta-marker" style="left:${Math.max(0,Math.min(100,META_NET_PECAS*100))}%"></div></div>
+        <div class="gauge-labels"><span>Resultado NET em peças</span><span>Meta <b class="mono">${fmtPct(META_NET_PECAS)}</b></span></div>
+      </section>
+      <section class="card" aria-labelledby="v28-value-title">
+        <h2 class="section-title" id="v28-value-title">Acuracidade de Inventário em Valor (NET)</h2>
+        <div class="v28-gauge-main"><strong class="gauge-value ${v28Tone(pctNetValor,META_NET_VALOR,valorInventario>0)}">${fmtPct(pctNetValor)}</strong><span class="v28-state ${v28Tone(pctNetValor,META_NET_VALOR,valorInventario>0)}">${v28Status(pctNetValor,META_NET_VALOR,valorInventario>0)}</span></div>
+        <div class="gauge-bar" aria-hidden="true"><div class="gauge-fill" style="width:${Math.max(0,Math.min(100,pctNetValor*100))}%;background:var(${!valorInventario?'--muted':pctNetValor<META_NET_VALOR?'--red':'--teal'})"></div><div class="gauge-meta-marker" style="left:${Math.max(0,Math.min(100,META_NET_VALOR*100))}%"></div></div>
+        <div class="gauge-labels"><span>Resultado NET financeiro</span><span>Meta <b class="mono">${fmtPct(META_NET_VALOR)}</b></span></div>
+      </section>
+    </div>
+
+    ${v28Attention(curvaRows,fabricaStats,fabricaNomes,fabricaData,ttNetValor,ttGrossValor,sobraValor,faltaValor,valorInventario>0)}
+
+    <div class="v28-diagnostics onepage-block">
+      <section class="card" id="v28-factory" aria-labelledby="v28-factory-title">
+        <h2 class="section-title" id="v28-factory-title">Acuracidade Comparativa por Fábrica</h2>
+        <p class="v28-note">NET em valor · comparação no período selecionado</p>
+        <div class="chart-box"><canvas id="fabricaCompareChartCanvas" role="img" aria-label="Acuracidade por fábrica: ${fabricaNomes.map(function(f,i){return escapeHtml(f)+' '+fmtPct(fabricaData[i]/100);}).join('; ')}"></canvas></div>
+        <p class="v28-legend">${fabricaNomes.length?'Fábricas na ordem original. A menor acuracidade aparece em âmbar quando houver diferença entre elas.':'As fábricas aparecerão conforme os lançamentos carregados.'}</p>
+      </section>
+      <section class="card" aria-labelledby="v28-curve-title">
+        <h2 class="section-title" id="v28-curve-title">Resultado NET (%) por Curva vs. Meta</h2>
+        <p class="v28-note">A, B, C e D · metas existentes por curva</p>
+        <div class="chart-box"><canvas id="curvaChartCanvas" role="img" aria-label="Resultado NET e meta por curva; valores completos na tabela de IRA"></canvas></div>
+      </section>
+    </div>
+
+    <section class="card v28-ira onepage-block" aria-labelledby="v28-ira-title">
+      <div class="v28-section-head"><h2 class="section-title" id="v28-ira-title">Resultado do IRA por Curva</h2><p>Sistema → Físico → Diferença → Resultado</p></div>
+      <div class="tbl-wrap" tabindex="0" role="region" aria-label="Tabela IRA por curva; role horizontalmente para ver todas as colunas">
         <table class="dtbl">
           <thead><tr>
-            <th>Curva</th><th class="right">Qtde Sistema</th><th class="right">Qtde Físico</th>
-            <th class="right">Dif. Peças NET</th><th class="right">Dif. Peças GROSS</th>
-            <th class="right">Valor Sistema</th><th class="right">Valor Físico</th>
-            <th class="right">Dif. R$ NET</th><th class="right">Dif. Valor GROSS</th>
-            <th class="right">Result. GROSS %</th><th class="right">Result. NET %</th><th class="right">Meta</th>
+            <th scope="col">Curva</th><th scope="col" class="right">Qtde<br>Sistema</th><th scope="col" class="right">Qtde<br>Físico</th>
+            <th scope="col" class="right">Dif. Peças<br>NET</th><th scope="col" class="right">Dif. Peças<br>GROSS</th>
+            <th scope="col" class="right">Valor<br>Sistema</th><th scope="col" class="right">Valor<br>Físico</th>
+            <th scope="col" class="right">Dif. R$<br>NET</th><th scope="col" class="right">Dif. Valor<br>GROSS</th>
+            <th scope="col" class="right">Result.<br>GROSS %</th><th scope="col" class="right">Result.<br>NET %</th><th scope="col" class="right">Meta</th>
           </tr></thead>
-          <tbody>
-            ${curvaRows.map(function(r){
-              const netColor = r.pctNetV===null ? 'var(--muted)' : ((r.meta!==null && r.pctNetV<r.meta) ? 'var(--red)' : 'var(--teal)');
-              return '<tr><td><b>'+r.curva+'</b></td>'+
-                '<td class="right mono">'+fmtNum(r.qtdSistema)+'</td>'+
-                '<td class="right mono">'+fmtNum(r.qtdFisico)+'</td>'+
-                '<td class="right mono" style="color:'+(r.diffNetPecas<0?'var(--red)':(r.diffNetPecas>0?'var(--teal)':'var(--text)'))+'">'+fmtNum(r.diffNetPecas)+'</td>'+
-                '<td class="right mono">'+fmtNum(r.diffGrossPecas)+'</td>'+
-                '<td class="right mono">'+fmtMoney(r.valorSistema)+'</td>'+
-                '<td class="right mono">'+fmtMoney(r.valorFisico)+'</td>'+
-                '<td class="right mono" style="color:'+(r.diffNetValor<0?'var(--red)':(r.diffNetValor>0?'var(--teal)':'var(--text)'))+'">'+fmtMoney(r.diffNetValor)+'</td>'+
-                '<td class="right mono">'+fmtMoney(r.diffGrossValor)+'</td>'+
-                '<td class="right mono">'+(r.pctGrossV!==null?fmtPct(r.pctGrossV):'\u2014')+'</td>'+
-                '<td class="right mono" style="color:'+netColor+'">'+(r.pctNetV!==null?fmtPct(r.pctNetV):'\u2014')+'</td>'+
-                '<td class="right mono">'+(r.meta!==null?fmtPct(r.meta):'\u2014')+'</td></tr>';
-            }).join('')}
-          </tbody>
+          <tbody>${curvaRows.map(function(r){
+            const tone=v28Tone(r.pctNetV,r.meta,r.valorSistema>0 && r.meta!==null);
+            return '<tr><td><b>'+r.curva+'</b></td>'+
+              '<td class="right mono">'+fmtNum(r.qtdSistema)+'</td><td class="right mono">'+fmtNum(r.qtdFisico)+'</td>'+
+              '<td class="right mono '+v28SignedTone(r.diffNetPecas)+'">'+fmtNum(r.diffNetPecas)+'</td><td class="right mono">'+fmtNum(r.diffGrossPecas)+'</td>'+
+              '<td class="right mono">'+fmtMoney(r.valorSistema)+'</td><td class="right mono">'+fmtMoney(r.valorFisico)+'</td>'+
+              '<td class="right mono '+v28SignedTone(r.diffNetValor)+'">'+fmtMoney(r.diffNetValor)+'</td><td class="right mono">'+fmtMoney(r.diffGrossValor)+'</td>'+
+              '<td class="right mono">'+(r.pctGrossV!==null?fmtPct(r.pctGrossV):'—')+'</td>'+
+              '<td class="right mono v28-result '+tone+'" title="'+v28Status(r.pctNetV,r.meta,r.valorSistema>0 && r.meta!==null)+'">'+(r.pctNetV!==null?fmtPct(r.pctNetV):'—')+'</td>'+
+              '<td class="right mono">'+(r.meta!==null?fmtPct(r.meta):'—')+'</td></tr>';
+          }).join('')}</tbody>
         </table>
       </div>
-    </div>
-    <div class="card">
-      <div class="section-title">Resultado NET (%) por Curva vs. Meta</div>
-      <div class="chart-box"><canvas id="curvaChartCanvas"></canvas></div>
-    </div>
-  </div>
+      <p class="v28-legend">NET em valor: turquesa dentro da meta; vermelho abaixo da meta. Sobra em âmbar e falta em vermelho nas diferenças.</p>
+    </section>
 
-  <div class="card onepage-block">
-    <div class="section-title">Evolução da Acurácia (Valor)</div>
-    <div class="chart-box"><canvas id="dashChartCanvas"></canvas></div>
-  </div>
+    <section class="card v28-timeline onepage-block" aria-labelledby="v28-history-title">
+      <div class="v28-section-head"><h2 class="section-title" id="v28-history-title">Evolução da Acurácia (Valor)</h2><p>Todos os pontos preservados · consulte a data completa no gráfico</p></div>
+      <div class="chart-box"><canvas id="dashChartCanvas" role="img" aria-label="Evolução da acurácia em valor; informações completas no histórico por data"></canvas></div>
+    </section>
 
-  <!-- NOVO: gráfico comparativo por fábrica -->
-  <div class="card onepage-block">
-    <div class="section-title">Acuracidade Comparativa por Fábrica</div>
-    <div class="chart-box"><canvas id="fabricaCompareChartCanvas"></canvas></div>
-  </div>
-
-  <!-- ===== PARTE INFERIOR — Detalhamento dos resultados ===== -->
-  <div class="card onepage-block" data-png-exclude="detalhamento-resultados">
-    <div class="section-title">Detalhamento dos Resultados — Histórico por Data</div>
-    <div class="tbl-wrap">
-      <table class="dtbl hist-table">
-        <colgroup><col style="width:16%"><col style="width:16%"><col style="width:17%"><col style="width:17%"><col style="width:18%"><col style="width:16%"></colgroup>
-        <thead><tr><th>Data</th><th class="right">Itens contados</th><th class="right">Qtde Sistema</th><th class="right">Qtde Contada</th><th class="right">Diferença R$</th><th class="right">Acurácia</th></tr></thead>
-        <tbody>${histRows || '<tr><td colspan="6" class="empty-state">Nenhuma contagem lançada ainda.</td></tr>'}</tbody>
-        ${histRows?'<tfoot>'+histTotalRow+'</tfoot>':''}
-      </table>
-    </div>
+    <section class="card onepage-block" data-png-exclude="detalhamento-resultados">
+      <div class="v28-section-head"><h2 class="section-title">Detalhamento dos Resultados — Histórico por Data</h2><p>Consulta operacional · não incluído no PNG</p></div>
+      <div class="tbl-wrap" tabindex="0" role="region" aria-label="Histórico por data">
+        <table class="dtbl hist-table">
+          <colgroup><col style="width:16%"><col style="width:16%"><col style="width:17%"><col style="width:17%"><col style="width:18%"><col style="width:16%"></colgroup>
+          <thead><tr><th>Data</th><th class="right">Itens contados</th><th class="right">Qtde Sistema</th><th class="right">Qtde Contada</th><th class="right">Diferença R$</th><th class="right">Acurácia</th></tr></thead>
+          <tbody>${histRows || '<tr><td colspan="6" class="empty-state">Nenhuma contagem lançada ainda.</td></tr>'}</tbody>
+          ${histRows?'<tfoot>'+histTotalRow+'</tfoot>':''}
+        </table>
+      </div>
+    </section>
   </div>
   `;
 }
@@ -1903,132 +2093,39 @@ function renderSingleChart(canvasId, hasDataFn, buildConfigFn, chartVarSetter, c
 }
 
 function renderAllDashCharts(){
-  // Evolução da Acurácia (Valor)
-  renderSingleChart(
-    'dashChartCanvas',
-    function(){ return !!(dashSeriesData && dashSeriesData.labels && dashSeriesData.labels.length); },
+  const muted='#b0becd',grid='#304153',blue='#6aaefb',teal='#53d5b5',red='#ff8790',amber='#f4c16c';
+  const tooltip={backgroundColor:'#0c151f',titleColor:'#eff4f9',bodyColor:'#eff4f9',padding:12,callbacks:{label:function(c){return c.dataset.label+': '+(Number.isFinite(c.raw)?fmtPct(c.raw/100):'Sem base');}}};
+  const pctTicks={color:muted,font:{size:11},callback:function(v){return v.toLocaleString('pt-BR')+'%';}};
+  renderSingleChart('dashChartCanvas',
+    function(){return !!(dashSeriesData && dashSeriesData.labels && dashSeriesData.labels.length);},
+    function(){return {
+      type:'line',data:{labels:dashSeriesData.labels,datasets:[{label:'Acurácia em valor',data:dashSeriesData.data,borderColor:blue,backgroundColor:'rgba(106,174,251,0.08)',borderWidth:2,tension:0,fill:false,pointRadius:dashSeriesData.labels.length>30?0:3,pointHitRadius:12,pointHoverRadius:5,pointBackgroundColor:blue}]},
+      options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},
+        scales:{y:{ticks:pctTicks,grid:{color:grid}},x:{ticks:{color:muted,font:{size:11},autoSkip:true,maxTicksLimit:8,maxRotation:0,minRotation:0},grid:{display:false}}},
+        plugins:{legend:{display:false},tooltip:tooltip,decimation:{enabled:false}}}
+    };},function(c){dashChart=c;},function(){return dashChart;});
+  renderSingleChart('fabricaCompareChartCanvas',
+    function(){return !!(dashSeriesData && dashSeriesData.fabricaLabels && dashSeriesData.fabricaLabels.length);},
     function(){
-      return {
-        type: 'line',
-        data: {
-          labels: dashSeriesData.labels,
-          datasets: [{
-            label: '% Acurácia (Valor)',
-            data: dashSeriesData.data,
-            borderColor: '#F2A93B',
-            backgroundColor: 'rgba(242,169,59,0.12)',
-            tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: '#F2A93B'
-          }]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          scales: {
-            y: { ticks:{color:'#8B94A3', callback:function(v){return v+'%';}}, grid:{color:'#2C333E'} },
-            x: { ticks:{color:'#8B94A3'}, grid:{display:false} }
-          },
-          plugins: { legend: { labels:{ color:'#E7E9EC' } } }
-        }
-      };
-    },
-    function(c){ dashChart = c; },
-    function(){ return dashChart; }
-  );
-
-  // Acuracidade Comparativa por Fábrica
-  renderSingleChart(
-    'fabricaCompareChartCanvas',
-    function(){ return !!(dashSeriesData && dashSeriesData.fabricaLabels && dashSeriesData.fabricaLabels.length); },
+      const vals=dashSeriesData.fabricaData;
+      return {type:'bar',data:{labels:dashSeriesData.fabricaLabels,datasets:[{label:'Acurácia em valor',data:vals,backgroundColor:dashSeriesData.fabricaColors,borderRadius:3,maxBarThickness:38}]},
+        plugins:[v28ChartLabelPlugin('v28FactoryLabels','horizontal')],
+        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,animation:false,layout:{padding:{right:100}},
+          scales:{x:{beginAtZero:true,suggestedMax:100,ticks:pctTicks,grid:{color:grid}},y:{ticks:{color:'#eff4f9',font:{size:14,weight:'600'}},grid:{display:false}}},
+          plugins:{legend:{display:false},tooltip:tooltip}}};
+    },function(c){fabricaCompareChart=c;},function(){return fabricaCompareChart;});
+  renderSingleChart('curvaChartCanvas',
+    function(){return !!(dashSeriesData && dashSeriesData.curvaLabels && dashSeriesData.curvaLabels.length);},
     function(){
-      return {
-        type: 'bar',
-        data: {
-          labels: dashSeriesData.fabricaLabels,
-          datasets: [{
-            label: '% Acurácia (Valor)',
-            data: dashSeriesData.fabricaData,
-            backgroundColor: dashSeriesData.fabricaColors,
-            borderRadius: 4
-          }]
-        },
-        plugins: [{
-          id: 'fabricaValueLabels',
-          afterDatasetsDraw: function(chart){
-            const dataset=chart.data.datasets[0], meta=chart.getDatasetMeta(0), ctx=chart.ctx;
-            if(!dataset || !meta || !ctx) return;
-            ctx.save();
-            ctx.fillStyle='#F7F8FA';
-            ctx.font='700 12px Inter, Arial, sans-serif';
-            ctx.textAlign='center';
-            ctx.textBaseline='middle';
-            meta.data.forEach(function(bar,index){
-              const value=Number(dataset.data[index]);
-              if(!bar || !Number.isFinite(value)) return;
-              const label=value.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
-              const y=Math.max(chart.chartArea.top+12,bar.y+15);
-              ctx.fillText(label,bar.x,y);
-            });
-            ctx.restore();
-          }
-        }],
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          scales: {
-            y: { ticks:{color:'#8B94A3', callback:function(v){return v+'%';}}, grid:{color:'#2C333E'} },
-            x: { ticks:{color:'#8B94A3'}, grid:{display:false} }
-          },
-          plugins: { legend: { display:false } }
-        }
-      };
-    },
-    function(c){ fabricaCompareChart = c; },
-    function(){ return fabricaCompareChart; }
-  );
-
-  // NOVO (PARTE 2): Resultado NET (%) por Curva vs. Meta (barra + linha de meta)
-  renderSingleChart(
-    'curvaChartCanvas',
-    function(){ return !!(dashSeriesData && dashSeriesData.curvaLabels && dashSeriesData.curvaLabels.length); },
-    function(){
-      const metaData = dashSeriesData.curvaMetaData;
-      const netData = dashSeriesData.curvaNetData;
-      return {
-        data: {
-          labels: dashSeriesData.curvaLabels,
-          datasets: [
-            {
-              type: 'bar',
-              label: 'Resultado NET (%)',
-              data: netData,
-              backgroundColor: netData.map(function(v,i){
-                if(v===null) return '#8B94A3';
-                const meta = metaData[i];
-                return (meta!==null && v<meta) ? '#E5484D' : '#2FBF9F';
-              }),
-              borderRadius: 4
-            },
-            {
-              type: 'line',
-              label: 'Meta da Curva (%)',
-              data: metaData,
-              borderColor: '#F2A93B', backgroundColor: '#F2A93B',
-              borderDash: [6,4], pointRadius: 3, pointBackgroundColor: '#F2A93B',
-              fill: false, tension: 0
-            }
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          scales: {
-            y: { ticks:{color:'#8B94A3', callback:function(v){return v+'%';}}, grid:{color:'#2C333E'} },
-            x: { ticks:{color:'#8B94A3'}, grid:{display:false} }
-          },
-          plugins: { legend: { labels:{ color:'#E7E9EC' } } }
-        }
-      };
-    },
-    function(c){ curvaChart = c; },
-    function(){ return curvaChart; }
-  );
+      const metaData=dashSeriesData.curvaMetaData,netData=dashSeriesData.curvaNetData;
+      return {data:{labels:dashSeriesData.curvaLabels,datasets:[
+        {type:'bar',label:'Resultado NET (%)',data:netData,backgroundColor:netData.map(function(v,i){return v===null?muted:metaData[i]!==null && v<metaData[i]?red:teal;}),borderRadius:3,maxBarThickness:52,order:2},
+        {type:'line',label:'Meta da Curva (%)',data:metaData,borderColor:amber,backgroundColor:amber,borderWidth:2,borderDash:[6,4],pointRadius:4,pointBackgroundColor:amber,fill:false,tension:0,order:1}
+      ]},plugins:[v28ChartLabelPlugin('v28CurveLabels','vertical')],
+        options:{responsive:true,maintainAspectRatio:false,animation:false,layout:{padding:{top:18}},interaction:{mode:'index',intersect:false},
+          scales:{y:{suggestedMax:105,ticks:pctTicks,grid:{color:grid}},x:{ticks:{color:'#eff4f9',font:{size:13,weight:'600'}},grid:{display:false}}},
+          plugins:{legend:{position:'bottom',labels:{color:muted,font:{size:11},boxWidth:14,boxHeight:8,padding:18}},tooltip:tooltip}}};
+    },function(c){curvaChart=c;},function(){return curvaChart;});
 }
 
 function exportDashboardExcel(button){
@@ -2073,7 +2170,7 @@ function exportDashboardPNG(button){
     try{
       const detailCard=el.querySelector('[data-png-exclude="detalhamento-resultados"]');
       const detailHeight=detailCard?detailCard.offsetHeight:0;
-      const captureWidth=Math.max(el.scrollWidth,el.clientWidth||0,1200);
+      const captureWidth=Math.max(el.scrollWidth,el.clientWidth||0,1480);
       const captureHeight=Math.max(el.scrollHeight-detailHeight,el.clientHeight||0,800);
       canvas=await html2canvas(el,{
         backgroundColor:'#12151A',
@@ -2082,7 +2179,6 @@ function exportDashboardPNG(button){
         allowTaint:false,
         logging:false,
         width:captureWidth,
-        height:captureHeight,
         windowWidth:captureWidth,
         windowHeight:captureHeight,
         scrollX:0,
@@ -2091,6 +2187,9 @@ function exportDashboardPNG(button){
           const clonedContent=doc.getElementById('content');
           if(clonedContent){
             clonedContent.style.overflow='visible';
+            clonedContent.style.width=captureWidth+'px';
+            const pro=clonedContent.querySelector('.v28-dashboard');
+            if(pro) pro.classList.add('v28-png');
             clonedContent.style.height='auto';
             clonedContent.style.maxHeight='none';
             clonedContent.style.paddingBottom='24px';
@@ -2107,23 +2206,9 @@ function exportDashboardPNG(button){
           }
           const detalheCard=doc.querySelector('[data-png-exclude="detalhamento-resultados"]');
           if(detalheCard) detalheCard.style.display='none';
-          const fabricaCard=Array.from(doc.querySelectorAll('.section-title')).find(function(node){
-            return normalizeText(node.textContent)==='ACURACIDADE COMPARATIVA POR FABRICA';
-          });
-          if(fabricaCard && typeof fabricaCompareChart!=='undefined' && fabricaCompareChart && typeof fabricaCompareChart.toBase64Image==='function'){
-            const box=fabricaCard.closest('.card');
-            const clonedCanvas=box?box.querySelector('#fabricaCompareChartCanvas'):null;
-            if(clonedCanvas){
-              const img=doc.createElement('img');
-              img.src=fabricaCompareChart.toBase64Image('image/png',1);
-              img.alt='Acuracidade Comparativa por Fábrica';
-              img.style.width='100%';
-              img.style.height='320px';
-              img.style.display='block';
-              img.style.objectFit='contain';
-              clonedCanvas.parentNode.replaceChild(img,clonedCanvas);
-            }
-          }
+          v28ExportChart(doc,'fabricaCompareChartCanvas',fabricaCompareChart);
+          v28ExportChart(doc,'curvaChartCanvas',curvaChart);
+          v28ExportChart(doc,'dashChartCanvas',dashChart);
         }
       });
     }
